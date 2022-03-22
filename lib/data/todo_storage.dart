@@ -10,6 +10,7 @@ final TodoStorage todoStorage = FileSystemTodoStorage();
 
 abstract class TodoStorage {
   Future<List<Todo>> readTodoList();
+  Future<void> insertTodo(Todo todo);
 }
 
 class FileSystemTodoStorage extends TodoStorage {
@@ -33,5 +34,18 @@ class FileSystemTodoStorage extends TodoStorage {
     final directory = await getApplicationDocumentsDirectory();
     final path = directory.path;
     return File('$path/todoList.json');
+  }
+
+  @override
+  Future<void> insertTodo(Todo todo) async {
+    final latestTodoList = await readTodoList();
+    latestTodoList.add(todo);
+    try {
+      final file = await _localFile;
+      final jsonArray = latestTodoList.map((todo) => todo.toJson()).toList();
+      await file.writeAsString(jsonEncode(jsonArray));
+    } catch (e) {
+      return;
+    }
   }
 }
