@@ -7,20 +7,34 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final todoList = todoStorage.readTodoList();
     return Scaffold(
-      body: ListView(
-        children: todoList
-            .map(
-              (e) => Card(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Text(e.title),
-            ),
-          ),
-        )
-            .toList(),
-      ),
+      body: FutureBuilder<List<Todo>>(
+          future: todoStorage.readTodoList(),
+          builder: (_, snapshot) {
+            if (snapshot.hasData) {
+              final todoList = snapshot.data!;
+              return ListView(
+                children: todoList
+                    .map(
+                      (e) => Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(e.title),
+                    ),
+                  ),
+                )
+                    .toList(),
+              );
+            } else if (snapshot.hasError) {
+              return const Center(
+                child: Text("Something went wrong"),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 }
