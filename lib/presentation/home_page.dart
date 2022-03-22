@@ -3,9 +3,14 @@ import 'package:todolist/business/todo_bloc.dart';
 import 'package:todolist/data/model/todo_model.dart';
 import 'package:todolist/data/todo_storage.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,12 +28,12 @@ class HomePage extends StatelessWidget {
                         children: todoList
                             .map(
                               (e) => Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(24),
-                                  child: Text(e.title),
-                                ),
-                              ),
-                            )
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Text(e.title),
+                            ),
+                          ),
+                        )
                             .toList(),
                       );
                     } else if (snapshot.hasError) {
@@ -48,7 +53,7 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.all(24),
                 child: FloatingActionButton(
                   onPressed: (){
-                    todoBloc.addTodo();
+                    _onAddTodoButtonPressed();
                   },
                   child: const Icon(Icons.add),
                 ),
@@ -59,4 +64,10 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _onAddTodoButtonPressed() async {
+    await todoBloc.addTodo();
+    setState(() {});
+  }
 }
+
